@@ -1,1 +1,580 @@
+أنا فحصت رابطك الآن (https://admohm172-cpu.github.io/-/)! الرابط نفسه شغال
+ومربوط صح، لكن ملف index.html اللي انحفظ في GitHub طلع فارغ أو ناقص (ولهذا السبب
+تطلع الشاشة بيضاء).
 
+الحل البسيط (دقيقة واحدة فقط):
+
+1.  افتح صفحتك في GitHub واضغط على ملف index.html.
+2.  اضغط على علامة القلم ✏️ (تعديل الملف / Edit).
+3.  اضغط داخل مربع الكود، واختر تحديد الكل (Select All) ← ثم حذف (Delete) حتى
+    يفرغ المربع تماماً.
+4.  انسخ الكود الموجود بالأسفل بضغطة على زر النسخ (Copy) الموجود بأعلى زاوية
+    مربع الكود (مهم: لا تحدد بإصبعك لأن السحب بالإصبع أحياناً يقطع الكود).
+5.  الصق الكود داخل المربع في GitHub، وتأكد إن آخر سطر يظهر بالأسفل هو </html>.
+6.  اضغط Commit changes... ثم Commit changes للحفظ، وانتظر 40 ثانية ثم حدّث
+    الرابط!
+
+انسخ هذا الكود (من زر النسخ بالأعلى):
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="مسار">
+  <title>مسار | النقل الذكي في نينوى</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root { --primary:#2563eb; --accent:#38bdf8; --dark:#0f172a; --success:#16a34a; --danger:#dc2626; --warning:#d97706; --bg:#f1f5f9; --border:#e2e8f0; --muted:#64748b; }
+    * { box-sizing:border-box; font-family:'Cairo',system-ui,sans-serif; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+    body, html { height:100dvh; width:100%; overflow:hidden; background:#0f172a; color:var(--dark); }
+    .app-shell { position:relative; width:100%; height:100dvh; max-width:480px; margin:0 auto; background:var(--bg); overflow:hidden; box-shadow:0 0 40px rgba(0,0,0,0.45); }
+    .screen { display:none; height:100%; width:100%; position:absolute; inset:0; overflow-y:auto; background:var(--bg); }
+    .screen.active { display:flex; flex-direction:column; }
+
+    #auth-screen { background:radial-gradient(circle at top right,#1d4ed8 0%,#0f172a 65%); color:white; padding:24px 18px; justify-content:center; align-items:center; }
+    .brand-logo { text-align:center; margin-bottom:16px; }
+    .logo-badge { width:62px; height:62px; margin:0 auto 8px; background:rgba(56,189,248,0.14); border:2px solid rgba(56,189,248,0.45); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:28px; }
+    .brand-logo h1 { font-size:34px; font-weight:900; color:#fff; line-height:1.1; }
+    .brand-logo h1 span { color:var(--accent); }
+    .brand-logo p { font-size:13px; color:#cbd5e1; margin-top:4px; }
+    .auth-box { background:#fff; color:var(--dark); width:100%; padding:20px; border-radius:24px; box-shadow:0 20px 45px rgba(0,0,0,0.35); }
+    .tabs { display:flex; background:#f1f5f9; border-radius:14px; padding:4px; margin-bottom:14px; gap:4px; }
+    .tab { flex:1; text-align:center; padding:9px 6px; border-radius:11px; cursor:pointer; font-weight:800; font-size:12px; color:var(--muted); transition:0.2s; }
+    .tab.active { background:var(--primary); color:white; }
+    .form-group { margin-bottom:10px; }
+    .form-group label { display:block; font-size:12px; font-weight:800; margin-bottom:4px; color:#334155; }
+    .form-group input, .form-group select { width:100%; padding:10px 12px; border:1.5px solid #cbd5e1; border-radius:12px; font-size:14px; font-weight:600; outline:none; background:#f8fafc; }
+    .form-group input:focus { border-color:var(--primary); background:#fff; }
+
+    .btn { width:100%; padding:12px; border:none; border-radius:14px; font-size:14px; font-weight:800; cursor:pointer; margin-top:6px; text-align:center; display:inline-flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; }
+    .btn:active { transform:scale(0.98); }
+    .btn-primary { background:linear-gradient(135deg,#2563eb,#1d4ed8); color:white; }
+    .btn-success { background:linear-gradient(135deg,#16a34a,#15803d); color:white; }
+    .btn-danger { background:linear-gradient(135deg,#dc2626,#b91c1c); color:white; }
+    .btn-warning { background:linear-gradient(135deg,#f59e0b,#d97706); color:white; }
+    .btn-outline { background:#f8fafc; color:var(--dark); border:1.5px solid #cbd5e1; }
+    .btn-sm { padding:6px 10px; font-size:12px; width:auto; margin:0; border-radius:10px; }
+
+    #customer-screen { position:relative; overflow:hidden; }
+    #map { height:100%; width:100%; z-index:1; }
+    .top-bar { position:absolute; top:12px; left:12px; right:12px; z-index:1000; background:rgba(255,255,255,0.94); backdrop-filter:blur(10px); padding:9px 14px; border-radius:16px; box-shadow:0 8px 25px rgba(15,23,42,0.12); display:flex; justify-content:space-between; align-items:center; }
+    .top-bar .app-title { font-weight:900; font-size:18px; color:var(--primary); }
+    .map-fab { position:absolute; top:70px; left:12px; z-index:1000; background:white; border:none; padding:8px 12px; border-radius:12px; font-size:12px; font-weight:800; color:var(--dark); box-shadow:0 4px 15px rgba(0,0,0,0.14); cursor:pointer; }
+
+    .booking-panel { position:absolute; bottom:0; left:0; right:0; z-index:1000; background:white; border-radius:26px 26px 0 0; padding:10px 16px 16px; box-shadow:0 -8px 30px rgba(15,23,42,0.16); max-height:72%; overflow-y:auto; transition:max-height 0.25s ease; }
+    .booking-panel.collapsed { max-height:56px; overflow:hidden; }
+    .sheet-handle { width:44px; height:5px; background:#cbd5e1; border-radius:99px; margin:0 auto 6px; cursor:pointer; }
+    .sheet-header-mini { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; cursor:pointer; }
+    .route-info-pill { background:#eff6ff; color:#1d4ed8; padding:7px 12px; border-radius:10px; font-size:12px; font-weight:800; text-align:center; margin-bottom:8px; display:none; }
+    .route-inputs-wrap { position:relative; }
+    .search-box { background:#f8fafc; border:1.5px solid var(--border); padding:8px 12px; border-radius:12px; margin-bottom:8px; display:flex; align-items:center; gap:9px; }
+    .dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+    .dot-start { background:#2563eb; box-shadow:0 0 0 3px #dbeafe; }
+    .dot-end { background:#16a34a; box-shadow:0 0 0 3px #dcfce7; }
+    .search-box label { font-size:11px; font-weight:800; color:var(--muted); display:block; }
+    .search-box input { width:100%; border:none; background:transparent; font-size:14px; font-weight:700; color:var(--dark); outline:none; }
+    .swap-btn { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:50%; background:white; border:1.5px solid var(--border); box-shadow:0 3px 10px rgba(0,0,0,0.08); cursor:pointer; font-size:14px; z-index:5; }
+
+    .ride-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:8px 0; }
+    .option-card { border:2px solid var(--border); border-radius:14px; padding:9px; text-align:center; cursor:pointer; transition:0.2s; }
+    .option-card.selected { border-color:var(--primary); background:#eff6ff; }
+    .option-card h4 { font-size:13px; color:var(--dark); font-weight:800; }
+    .option-card .price { font-size:15px; font-weight:900; color:var(--success); margin-top:2px; }
+    .alert-error { background:#fee2e2; color:#b91c1c; padding:9px; border-radius:10px; font-size:12px; font-weight:800; text-align:center; margin-bottom:8px; display:none; }
+    .active-ride-box { background:#f0fdf4; border:1.5px solid #86efac; padding:14px; border-radius:16px; text-align:center; }
+
+    #admin-screen, #captain-screen { background:var(--bg); padding:14px; padding-bottom:28px; }
+    .header-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:white; padding:12px 15px; border-radius:16px; box-shadow:0 2px 10px rgba(0,0,0,0.04); }
+    .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+    .stat-box { background:white; padding:10px 6px; border-radius:14px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.03); }
+    .stat-box .num { font-size:19px; font-weight:900; color:var(--primary); }
+    .stat-box .lbl { font-size:11px; font-weight:700; color:var(--muted); }
+    .card { background:white; padding:14px; border-radius:18px; margin-bottom:12px; box-shadow:0 2px 10px rgba(0,0,0,0.04); }
+    .card h3 { margin-bottom:10px; color:var(--dark); border-bottom:1px solid var(--border); padding-bottom:8px; font-size:15px; font-weight:800; }
+    .list-item { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid #f1f5f9; font-size:13px; gap:8px; }
+    .list-item:last-child { border-bottom:none; }
+    .badge { padding:3px 8px; border-radius:6px; font-size:11px; font-weight:800; white-space:nowrap; }
+    .badge-pending { background:#fef3c7; color:#b45309; }
+    .badge-active { background:#dcfce7; color:#15803d; }
+    .action-row { display:flex; gap:8px; margin-top:10px; }
+    .admin-section { display:none; }
+    .admin-section.active { display:block; }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <datalist id="nineveh-places-list"></datalist>
+
+  <div id="auth-screen" class="screen active">
+    <div class="brand-logo">
+      <div class="logo-badge">🚖</div>
+      <h1>مـ<span>سـار</span></h1>
+      <p>النقل الذكي بين الموصل والأقضية والقرى</p>
+    </div>
+    <div class="auth-box">
+      <div class="tabs" id="role-tabs">
+        <div class="tab active" onclick="switchRole('customer', this)">زبون (راكب)</div>
+        <div class="tab" onclick="switchRole('captain', this)">كابتن (سائق)</div>
+      </div>
+
+      <div id="customer-form">
+        <div class="form-group">
+          <label>الاسم</label>
+          <input type="text" id="cust-name" placeholder="اكتب اسمك هنا">
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف</label>
+          <input type="tel" id="cust-phone" placeholder="077xxxxxxxx" oninput="checkAdminPhone(this.value)">
+        </div>
+        <div class="form-group" id="admin-pass-group" style="display:none;">
+          <label style="color:#dc2626;">الرمز السري للإدارة</label>
+          <input type="password" id="admin-pass" placeholder="••••••••••">
+          <button class="btn btn-danger" onclick="loginAdmin()">دخول لوحة الإدارة</button>
+        </div>
+        <div id="cust-normal-actions">
+          <button class="btn btn-primary" onclick="registerCustomer()">تسجيل الدخول</button>
+        </div>
+        <div id="cust-verify-box" style="display:none; margin-top:12px; border-top:1px solid #e2e8f0; padding-top:12px;">
+          <p style="font-size:12px; color:#475569; margin-bottom:6px; font-weight:700;">للتفعيل الفوري، راسل الإدارة على واتساب لاستلام الرمز:</p>
+          <a id="wa-link" href="#" target="_blank" class="btn btn-success">طلب الرمز عبر واتساب</a>
+          <div class="form-group" style="margin-top:10px;">
+            <label>رمز التفعيل (4 أرقام)</label>
+            <input type="number" id="cust-code-input" placeholder="أدخل الرمز هنا">
+          </div>
+          <button class="btn btn-primary" onclick="verifyCustomerCode()">تأكيد والدخول</button>
+        </div>
+      </div>
+
+      <div id="captain-form" style="display:none;">
+        <div class="form-group">
+          <label>الاسم الثلاثي</label>
+          <input type="text" id="cap-name" placeholder="الاسم الثلاثي الكامل">
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف</label>
+          <input type="tel" id="cap-phone" placeholder="077xxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label>نوع السيارة ولونها</label>
+          <input type="text" id="cap-car" placeholder="مثال: النترا أبيض">
+        </div>
+        <div class="form-group">
+          <label>سنة الصنع (يقبل 2008 فما فوق فقط)</label>
+          <input type="number" id="cap-year" placeholder="مثال: 2015">
+        </div>
+        <div class="form-group">
+          <label>المستمسكات (الموحدة + إجازة السوق + السنوية)</label>
+          <input type="file" id="cap-docs" multiple accept="image/*" onchange="previewDocs(this)">
+          <div id="cap-docs-info" style="font-size:12px; color:var(--primary); font-weight:700; margin-top:4px;"></div>
+        </div>
+        <button class="btn btn-primary" onclick="registerCaptain()">دخول / إرسال طلب الانضمام</button>
+        <p id="cap-status-msg" style="font-size:12px; color:#16a34a; margin-top:8px; font-weight:800; text-align:center;"></p>
+        <a id="cap-wa-docs-link" href="#" target="_blank" class="btn btn-success" style="display:none; margin-top:8px;">إرسال صور المستمسكات للإدارة عبر واتساب</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="customer-screen" class="screen">
+    <div class="top-bar">
+      <div>
+        <span class="app-title">مسار</span>
+        <span id="welcome-cust" style="font-size:12px; color:#475569; margin-right:6px; font-weight:800;"></span>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="logout()">خروج</button>
+    </div>
+    <button class="map-fab" onclick="detectNearestLocation()">📍 أقرب نقطة لموقعي</button>
+    <div id="map"></div>
+    <div id="booking-panel" class="booking-panel">
+      <div class="sheet-handle" onclick="toggleBookingPanel()"></div>
+      <div class="sheet-header-mini" onclick="toggleBookingPanel()">
+        <strong style="font-size:14px;">أين وجهتك اليوم؟</strong>
+        <span id="sheet-toggle-txt" style="font-size:12px; color:var(--primary); font-weight:800;">تصغير ▾</span>
+      </div>
+      <div id="booking-form-area">
+        <div id="route-error" class="alert-error">عذراً! النقل الداخلي بين أحياء الموصل ممنوع. الخدمة مخصصة بين الموصل والأقضية والقرى فقط.</div>
+        <div id="route-stats" class="route-info-pill"></div>
+        <div class="route-inputs-wrap">
+          <button class="swap-btn" onclick="swapLocations()">⇅</button>
+          <div class="search-box">
+            <span class="dot dot-start"></span>
+            <div style="flex:1;"><label>نقطة الانطلاق</label><input type="text" id="pickup-input" list="nineveh-places-list" oninput="calculateRoute()" onchange="calculateRoute()"></div>
+          </div>
+          <div class="search-box">
+            <span class="dot dot-end"></span>
+            <div style="flex:1;"><label>نقطة الوصول</label><input type="text" id="dropoff-input" list="nineveh-places-list" oninput="calculateRoute()" onchange="calculateRoute()"></div>
+          </div>
+        </div>
+        <div class="ride-options">
+          <div id="opt-seat" class="option-card selected" onclick="selectRideType('seat')">
+            <h4>🪑 نفر / مقاعد</h4>
+            <div id="price-seat" class="price">0 د.ع</div>
+            <select id="seat-count" onchange="calculateRoute()" onclick="event.stopPropagation()" style="margin-top:5px; padding:4px; border-radius:8px; border:1px solid #cbd5e1; width:100%; font-weight:800; font-size:12px;">
+              <option value="1">1 نفر</option><option value="2">2 نفر</option><option value="3">3 نفرات</option><option value="4">4 نفرات</option>
+            </select>
+          </div>
+          <div id="opt-private" class="option-card" onclick="selectRideType('private')">
+            <h4>🚕 خصوصي (كاملة)</h4>
+            <div id="price-private" class="price">0 د.ع</div>
+            <small style="color:#64748b; display:block; margin-top:6px; font-weight:700;">انطلاق فوري</small>
+          </div>
+        </div>
+        <button id="confirm-ride-btn" class="btn btn-primary" onclick="bookRide()">اطلب تكسي مسار الآن</button>
+      </div>
+      <div id="active-ride-area" style="display:none;">
+        <div class="active-ride-box">
+          <h3 id="active-ride-status-title" style="color:#15803d; margin-bottom:6px; font-size:16px;">تم إرسال طلبك للكباتن!</h3>
+          <p id="active-ride-summary" style="font-size:13px; line-height:1.7; white-space:pre-line; font-weight:700;"></p>
+          <div id="active-ride-captain-info" style="margin-top:10px;"></div>
+          <button class="btn btn-danger" style="margin-top:10px;" onclick="cancelCustomerRide()">إلغاء الطلب والعودة</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="captain-screen" class="screen">
+    <div class="header-bar">
+      <div>
+        <strong style="font-size:17px; color:var(--primary);">مسار - الكابتن</strong>
+        <div id="cap-header-info" style="font-size:12px; color:var(--muted); font-weight:700;"></div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="logout()">خروج</button>
+    </div>
+    <div class="card">
+      <h3>💺 المقاعد الفارغة بسيارتك الآن:</h3>
+      <select id="cap-seats" onchange="updateCaptainSeats(this.value)" style="width:100%; padding:10px; border-radius:12px; border:1.5px solid #cbd5e1; font-weight:800;">
+        <option value="4">4 مقاعد (فارغة)</option><option value="3">3 مقاعد متاحة</option><option value="2">2 مقعد متاح</option><option value="1">1 مقعد متاح</option><option value="0">ممتلئة حالياً</option>
+      </select>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h3 style="font-size:15px;">📍 الطلبات المتاحة في نينوى:</h3>
+      <span class="badge badge-active">مباشر</span>
+    </div>
+    <div id="captain-rides-list"></div>
+  </div>
+
+  <div id="admin-screen" class="screen">
+    <div class="header-bar">
+      <strong style="font-size:17px; color:var(--danger);">🛡️ إدارة تطبيق مسار</strong>
+      <button class="btn btn-danger btn-sm" onclick="logout()">خروج</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box"><div id="stat-customers" class="num">0</div><div class="lbl">الزبائن</div></div>
+      <div class="stat-box"><div id="stat-captains" class="num">0</div><div class="lbl">الكباتن</div></div>
+      <div class="stat-box"><div id="stat-rides" class="num">0</div><div class="lbl">الرحلات</div></div>
+    </div>
+    <div class="tabs" style="background:white;">
+      <div class="tab active" onclick="switchAdminTab('customers', this)">الزبائن</div>
+      <div class="tab" onclick="switchAdminTab('captains', this)">الكباتن</div>
+      <div class="tab" onclick="switchAdminTab('rides', this)">الرحلات</div>
+      <div class="tab" onclick="switchAdminTab('prices', this)">التسعيرة</div>
+    </div>
+    <div id="admin-tab-customers" class="admin-section active"><div class="card"><h3>الزبائن وأكواد التفعيل</h3><div id="admin-customers-list"></div></div></div>
+    <div id="admin-tab-captains" class="admin-section"><div class="card"><h3>الكباتن (2008 فما فوق)</h3><div id="admin-captains-list"></div></div></div>
+    <div id="admin-tab-rides" class="admin-section"><div class="card"><h3>سجل الرحلات</h3><div id="admin-rides-list"></div></div></div>
+    <div id="admin-tab-prices" class="admin-section">
+      <div class="card">
+        <h3>تسعيرة الأقضية والقرى (د.ع)</h3>
+        <input type="text" placeholder="🔍 ابحث عن قضاء أو قرية..." oninput="filterAdminPrices(this.value)" style="width:100%; padding:9px; border-radius:10px; border:1.5px solid #cbd5e1; margin-bottom:10px; font-size:13px;">
+        <div id="admin-prices-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAyWFUwAlaCeBt7G_CRho1ojTdBzXuDC-o",
+    authDomain: "masar-915e9.firebaseapp.com",
+    projectId: "masar-915e9",
+    storageBucket: "masar-915e9.firebasestorage.app",
+    messagingSenderId: "916618581714",
+    appId: "1:916618581714:web:4a0738806d146d6f913f0b",
+    measurementId: "G-8Q0SLEMY63"
+  };
+
+  const db = getFirestore(initializeApp(firebaseConfig));
+
+  const locationsDB = [
+    {id:'m1',name:'الموصل - حي الزهور',type:'mosul',lat:36.3650,lng:43.1650,seatPrice:0,privatePrice:0},
+    {id:'m2',name:'الموصل - حي المثنى',type:'mosul',lat:36.3600,lng:43.1550,seatPrice:0,privatePrice:0},
+    {id:'m3',name:'الموصل - حي الكرامة',type:'mosul',lat:36.3450,lng:43.1950,seatPrice:0,privatePrice:0},
+    {id:'m4',name:'الموصل - حي القدس',type:'mosul',lat:36.3380,lng:43.2050,seatPrice:0,privatePrice:0},
+    {id:'m5',name:'الموصل - حي الانتصار',type:'mosul',lat:36.3300,lng:43.2100,seatPrice:0,privatePrice:0},
+    {id:'m6',name:'الموصل - المجموعة الثقافية',type:'mosul',lat:36.3780,lng:43.1450,seatPrice:0,privatePrice:0},
+    {id:'m7',name:'الموصل - حي العربي',type:'mosul',lat:36.4050,lng:43.1300,seatPrice:0,privatePrice:0},
+    {id:'m8',name:'الموصل - حي الحدباء',type:'mosul',lat:36.3950,lng:43.1550,seatPrice:0,privatePrice:0},
+    {id:'m9',name:'الموصل - حي التحرير',type:'mosul',lat:36.3700,lng:43.1900,seatPrice:0,privatePrice:0},
+    {id:'m10',name:'الموصل - حي السكر / البلديات',type:'mosul',lat:36.3820,lng:43.1620,seatPrice:0,privatePrice:0},
+    {id:'m11',name:'الموصل - حي نركال / الفيصلية',type:'mosul',lat:36.3520,lng:43.1480,seatPrice:0,privatePrice:0},
+    {id:'m12',name:'الموصل - الدواسة / النبي شيت (الأيمن)',type:'mosul',lat:36.3350,lng:43.1280,seatPrice:0,privatePrice:0},
+    {id:'m13',name:'الموصل - حي العامل / المنصور (الأيمن)',type:'mosul',lat:36.3200,lng:43.1150,seatPrice:0,privatePrice:0},
+    {id:'m14',name:'الموصل - حي 17 تموز / مشيرفة (الأيمن)',type:'mosul',lat:36.3650,lng:43.1050,seatPrice:0,privatePrice:0},
+    {id:'m15',name:'الموصل - حي التنك / اليرموك (الأيمن)',type:'mosul',lat:36.3320,lng:43.0900,seatPrice:0,privatePrice:0},
+    {id:'m16',name:'الموصل - كراج بغداد / باب الطوب',type:'mosul',lat:36.3400,lng:43.1320,seatPrice:0,privatePrice:0},
+    {id:'m17',name:'الموصل - حي الصحة / وادي حجر',type:'mosul',lat:36.3150,lng:43.1350,seatPrice:0,privatePrice:0},
+    {id:'m18',name:'الموصل - حي الوحدة / سومر',type:'mosul',lat:36.3180,lng:43.1750,seatPrice:0,privatePrice:0},
+    {id:'o1',name:'قضاء تلكيف (المركز والقرى)',type:'outer',lat:36.4911,lng:43.1211,seatPrice:3000,privatePrice:12000},
+    {id:'o2',name:'ناحية وانة والقرى التابعة',type:'outer',lat:36.6080,lng:42.9350,seatPrice:5000,privatePrice:20000},
+    {id:'o3',name:'ناحية القوش والقرى المحيطة',type:'outer',lat:36.7330,lng:43.0950,seatPrice:6000,privatePrice:25000},
+    {id:'o4',name:'ناحية فايدة والقرى التابعة',type:'outer',lat:36.7550,lng:42.9500,seatPrice:6000,privatePrice:25000},
+    {id:'o5',name:'قضاء الحمدانية (قرقوش / بغديدا)',type:'outer',lat:36.2711,lng:43.3775,seatPrice:4000,privatePrice:15000},
+    {id:'o6',name:'ناحية برطلة وقرى سهل نينوى',type:'outer',lat:36.3550,lng:43.3800,seatPrice:3000,privatePrice:12000},
+    {id:'o7',name:'ناحية بعشيقة وبحزاني والقرى',type:'outer',lat:36.4530,lng:43.3450,seatPrice:3500,privatePrice:14000},
+    {id:'o8',name:'ناحية النمرود وقرى السلامية',type:'outer',lat:36.1000,lng:43.3280,seatPrice:5000,privatePrice:18000},
+    {id:'o9',name:'ناحية حمام العليل والقرى',type:'outer',lat:36.1580,lng:43.2550,seatPrice:4000,privatePrice:15000},
+    {id:'o10',name:'ناحية الشورة والقرى التابعة',type:'outer',lat:35.9950,lng:43.2350,seatPrice:6000,privatePrice:22000},
+    {id:'o11',name:'ناحية القيارة والقرى الجنوبية',type:'outer',lat:35.8020,lng:43.2900,seatPrice:8000,privatePrice:30000},
+    {id:'o12',name:'قضاء الحضر والقرى المحيطة',type:'outer',lat:35.5880,lng:42.7180,seatPrice:10000,privatePrice:40000},
+    {id:'o13',name:'ناحية بادوش والقرى الغربية',type:'outer',lat:36.4250,lng:42.9650,seatPrice:3500,privatePrice:14000},
+    {id:'o14',name:'ناحية المحلبية والقرى',type:'outer',lat:36.3650,lng:42.7100,seatPrice:5000,privatePrice:20000},
+    {id:'o15',name:'قضاء تلعفر (المركز والقرى)',type:'outer',lat:36.3742,lng:42.4489,seatPrice:7000,privatePrice:28000},
+    {id:'o16',name:'ناحية العياضية والقرى',type:'outer',lat:36.4650,lng:42.4050,seatPrice:8000,privatePrice:32000},
+    {id:'o17',name:'ناحية زمار والقرى الشمالية',type:'outer',lat:36.6650,lng:42.6050,seatPrice:9000,privatePrice:35000},
+    {id:'o18',name:'ناحية ربيعة والقرى الحدودية',type:'outer',lat:36.8050,lng:42.1050,seatPrice:12000,privatePrice:45000},
+    {id:'o19',name:'قضاء سنجار والقرى التابعة',type:'outer',lat:36.3200,lng:41.8600,seatPrice:12000,privatePrice:45000},
+    {id:'o20',name:'قضاء البعاج والقرى',type:'outer',lat:36.0420,lng:41.7150,seatPrice:13000,privatePrice:50000},
+    {id:'o21',name:'قضاء مخمور والكوير والقرى',type:'outer',lat:35.7750,lng:43.5800,seatPrice:8000,privatePrice:30000},
+    {id:'o22',name:'قرى كوكجلي وبازوايا وطوبزاوة',type:'outer',lat:36.3520,lng:43.2550,seatPrice:2500,privatePrice:10000},
+    {id:'o23',name:'قرى الرشيدية والقبة وشريخان',type:'outer',lat:36.4350,lng:43.1050,seatPrice:2500,privatePrice:10000}
+  ];
+
+  const ADMIN_WA = '9647774633238';
+  let currentUser = null, selectedRideType = 'seat', activeRideId = null;
+  let map, pickupMarker, dropoffMarker, routePolyline, unsubs = [];
+
+  onSnapshot(doc(db, 'settings', 'prices'), snap => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    locationsDB.forEach(l => { if (d[l.id]) { l.seatPrice = d[l.id].seatPrice ?? l.seatPrice; l.privatePrice = d[l.id].privatePrice ?? l.privatePrice; }});
+    if (document.getElementById('customer-screen').classList.contains('active')) window.calculateRoute();
+  });
+
+  window.switchRole = (role, el) => {
+    document.querySelectorAll('#role-tabs .tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('customer-form').style.display = role === 'customer' ? 'block' : 'none';
+    document.getElementById('captain-form').style.display = role === 'captain' ? 'block' : 'none';
+  };
+
+  window.checkAdminPhone = (val) => {
+    const isAdmin = val.trim() === '07774633238';
+    document.getElementById('admin-pass-group').style.display = isAdmin ? 'block' : 'none';
+    document.getElementById('cust-normal-actions').style.display = isAdmin ? 'none' : 'block';
+    if (isAdmin) document.getElementById('cust-verify-box').style.display = 'none';
+  };
+
+  window.loginAdmin = () => {
+    if (document.getElementById('cust-phone').value.trim() === '07774633238' && document.getElementById('admin-pass').value === 'AaAa2001@@') {
+      showScreen('admin-screen');
+      startAdminListeners();
+    } else alert('خطأ في بيانات الدخول');
+  };
+
+  window.previewDocs = (input) => {
+    document.getElementById('cap-docs-info').innerText = input.files?.length ? `✓ تم اختيار ${input.files.length} صور` : '';
+  };
+
+  window.registerCustomer = async () => {
+    const name = document.getElementById('cust-name').value.trim();
+    const phone = document.getElementById('cust-phone').value.trim();
+    if (!name || phone.length < 10) return alert('يرجى إدخال الاسم ورقم الهاتف الصحيح');
+    try {
+      const ref = doc(db, 'customers', phone), snap = await getDoc(ref);
+      let cust;
+      if (snap.exists()) cust = snap.data();
+      else { cust = { name, phone, code: Math.floor(1000 + Math.random()*9000).toString(), verified:false, createdAt:Date.now() }; await setDoc(ref, cust); }
+      if (cust.verified) { currentUser = cust; return enterCustomerApp(); }
+      document.getElementById('wa-link').href = `https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(`مرحباً إدارة مسار، أنا الزبون (${name}) ورقمي (${phone}) أرجو تزويدي برمز التفعيل.`)}`;
+      document.getElementById('cust-verify-box').style.display = 'block';
+    } catch (e) {
+      alert('تأكد من تفعيل Firestore Database في Firebase بوضع Test Mode.\nالخطأ: ' + e.message);
+    }
+  };
+
+  window.verifyCustomerCode = async () => {
+    const phone = document.getElementById('cust-phone').value.trim();
+    const code = document.getElementById('cust-code-input').value.trim();
+    try {
+      const ref = doc(db, 'customers', phone), snap = await getDoc(ref);
+      if (snap.exists() && snap.data().code === code) {
+        await updateDoc(ref, { verified:true });
+        currentUser = { ...snap.data(), verified:true };
+        return enterCustomerApp();
+      }
+      alert('رمز التفعيل غير صحيح!');
+    } catch (e) { alert('خطأ في الاتصال: ' + e.message); }
+  };
+
+  window.registerCaptain = async () => {
+    const name = document.getElementById('cap-name').value.trim(), phone = document.getElementById('cap-phone').value.trim(),
+          car = document.getElementById('cap-car').value.trim(), year = parseInt(document.getElementById('cap-year').value);
+    if (!name || !phone || !car || !year) return alert('يرجى ملء جميع الحقول المطلوبة');
+    if (year <= 2007) return alert('عذراً! يُمنع تسجيل السيارات موديل 2007 فما دون.');
+    try {
+      const ref = doc(db, 'captains', phone), snap = await getDoc(ref);
+      let cap;
+      if (snap.exists()) cap = snap.data();
+      else { cap = { name, phone, car, year, seatsAvailable:4, approved:false, blocked:false, createdAt:Date.now() }; await setDoc(ref, cap); }
+      if (cap.blocked) return alert('حسابك محظور من الإدارة.');
+      if (cap.approved) {
+        currentUser = cap;
+        document.getElementById('cap-header-info').innerText = `${cap.name} | ${cap.car} (${cap.year})`;
+        document.getElementById('cap-seats').value = cap.seatsAvailable ?? 4;
+        showScreen('captain-screen');
+        return startCaptainListener();
+      }
+      document.getElementById('cap-status-msg').innerText = 'تم إرسال طلبك! أرسل صور المستمسكات عبر واتساب للموافقة السريعة.';
+      const wa = document.getElementById('cap-wa-docs-link');
+      wa.href = `https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(`مرحباً إدارة مسار، أنا الكابتن (${name})، رقمي (${phone})، سيارتي (${car} - ${year})، مرفق صور مستمسكاتي.`)}`;
+      wa.style.display = 'inline-flex';
+    } catch (e) {
+      alert('تأكد من تفعيل Firestore Database في Firebase.\nالخطأ: ' + e.message);
+    }
+  };
+
+  function enterCustomerApp() {
+    showScreen('customer-screen');
+    document.getElementById('welcome-cust').innerText = `أهلاً، ${currentUser.name}`;
+    document.getElementById('nineveh-places-list').innerHTML = locationsDB.map(l => `<option value="${l.name}"></option>`).join('');
+    if (!document.getElementById('pickup-input').value) {
+      document.getElementById('pickup-input').value = 'الموصل - حي الزهور';
+      document.getElementById('dropoff-input').value = 'قضاء تلكيف (المركز والقرى)';
+    }
+    if (!map) {
+      const bounds = L.latLngBounds(L.latLng(35.30, 41.20), L.latLng(37.10, 44.00));
+      map = L.map('map', { center:[36.3489, 43.1577], zoom:11, minZoom:9, maxBounds:bounds, maxBoundsViscosity:1.0, zoomControl:false });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'Masar' }).addTo(map);
+    }
+    setTimeout(() => { map.invalidateSize(); window.calculateRoute(); }, 200);
+  }
+
+  window.toggleBookingPanel = () => {
+    const p = document.getElementById('booking-panel'), c = p.classList.toggle('collapsed');
+    document.getElementById('sheet-toggle-txt').innerText = c ? 'توسيع ▴' : 'تصغير ▾';
+  };
+
+  window.swapLocations = () => {
+    const p = document.getElementById('pickup-input'), d = document.getElementById('dropoff-input');
+    [p.value, d.value] = [d.value, p.value];
+    window.calculateRoute();
+  };
+
+  window.detectNearestLocation = () => {
+    if (!navigator.geolocation) return alert('المتصفح لا يدعم GPS');
+    navigator.geolocation.getCurrentPosition(pos => {
+      let nearest = locationsDB[0], min = Infinity;
+      locationsDB.forEach(l => { const d = Math.hypot(l.lat - pos.coords.latitude, l.lng - pos.coords.longitude); if (d < min) { min = d; nearest = l; }});
+      document.getElementById('pickup-input').value = nearest.name;
+      window.calculateRoute();
+    }, () => alert('تعذر تحديد موقعك، تأكد من تفعيل GPS'));
+  };
+
+  window.selectRideType = (type) => {
+    selectedRideType = type;
+    document.getElementById('opt-seat').classList.toggle('selected', type === 'seat');
+    document.getElementById('opt-private').classList.toggle('selected', type === 'private');
+  };
+
+  window.calculateRoute = async () => {
+    const p = locationsDB.find(l => l.name === document.getElementById('pickup-input').value.trim());
+    const d = locationsDB.find(l => l.name === document.getElementById('dropoff-input').value.trim());
+    const err = document.getElementById('route-error'), stats = document.getElementById('route-stats'), btn = document.getElementById('confirm-ride-btn');
+    if (!p || !d || p.id === d.id) { btn.disabled = true; btn.style.opacity = '0.5'; stats.style.display = 'none'; return; }
+
+    if (pickupMarker) map.removeLayer(pickupMarker);
+    if (dropoffMarker) map.removeLayer(dropoffMarker);
+    if (routePolyline) map.removeLayer(routePolyline);
+    pickupMarker = L.marker([p.lat, p.lng]).addTo(map).bindPopup('انطلاق: ' + p.name);
+    dropoffMarker = L.marker([d.lat, d.lng]).addTo(map).bindPopup('وصول: ' + d.name);
+    map.fitBounds(L.latLngBounds([p.lat, p.lng], [d.lat, d.lng]), { padding:[50, 50] });
+
+    try {
+      const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${p.lng},${p.lat};${d.lng},${d.lat}?overview=full&geometries=geojson`);
+      const data = await res.json();
+      if (data.routes?.[0]) {
+        const r = data.routes[0];
+        routePolyline = L.polyline(r.geometry.coordinates.map(c => [c[1], c[0]]), { color:'#2563eb', weight:5, opacity:0.85 }).addTo(map);
+        stats.innerText = `🛣️ المسافة: ${(r.distance/1000).toFixed(1)} كم  •  ⏱️ الوقت: ${Math.round(r.duration/60)} دقيقة`;
+        stats.style.display = 'block';
+      }
+    } catch { stats.style.display = 'none'; }
+
+    if (p.type === 'mosul' && d.type === 'mosul') {
+      err.style.display = 'block'; btn.disabled = true; btn.style.opacity = '0.5';
+      document.getElementById('price-seat').innerText = 'ممنوع';
+      document.getElementById('price-private').innerText = 'ممنوع';
+      return;
+    }
+
+    err.style.display = 'none'; btn.disabled = false; btn.style.opacity = '1';
+    const seatUnit = (p.type === 'outer' && d.type === 'outer') ? Math.max(p.seatPrice, d.seatPrice) : (p.type === 'outer' ? p.seatPrice : d.seatPrice);
+    const privPrice = (p.type === 'outer' && d.type === 'outer') ? Math.max(p.privatePrice, d.privatePrice) : (p.type === 'outer' ? p.privatePrice : d.privatePrice);
+    const seats = parseInt(document.getElementById('seat-count').value);
+    document.getElementById('price-seat').innerText = (seatUnit * seats).toLocaleString() + ' د.ع';
+    document.getElementById('price-private').innerText = privPrice.toLocaleString() + ' د.ع';
+  };
+
+  window.bookRide = async () => {
+    const from = document.getElementById('pickup-input').value.trim(), to = document.getElementById('dropoff-input').value.trim();
+    const seatsNeeded = selectedRideType === 'seat' ? parseInt(document.getElementById('seat-count').value) : 4;
+    const details = selectedRideType === 'seat' ? `${document.getElementById('price-seat').innerText} (${seatsNeeded} نفر)` : `${document.getElementById('price-private').innerText} (خصوصي)`;
+    const ride = { customer:currentUser.name, phone:currentUser.phone, from, to, seatsNeeded, details, status:'بانتظار كابتن', captainName:'', captainPhone:'', captainCar:'', createdAt:Date.now() };
+    try {
+      const ref = await addDoc(collection(db, 'rides'), ride);
+      activeRideId = ref.id;
+      document.getElementById('booking-form-area').style.display = 'none';
+      document.getElementById('active-ride-area').style.display = 'block';
+      document.getElementById('active-ride-summary').innerText = `من: ${from}\nإلى: ${to}\nالتكلفة: ${details}`;
+      unsubs.push(onSnapshot(doc(db, 'rides', activeRideId), s => s.exists() && renderCustRideStatus(s.data())));
+    } catch (e) { alert('تعذر إرسال الطلب: ' + e.message); }
+  };
+
+  function renderCustRideStatus(r) {
+    const title = document.getElementById('active-ride-status-title'), info = document.getElementById('active-ride-captain-info');
+    if (r.status === 'تم القبول') {
+      title.innerText = '✅ تم قبول رحلتك!';
+      info.innerHTML = `<div style="background:#dcfce7;padding:10px;border-radius:12px;font-size:13px;"><strong>الكابتن: ${r.captainName}</strong><br>${r.captainCar}<br><a href="tel:${r.captainPhone}" class="btn btn-primary btn-sm" style="margin-top:6px;">📞 اتصال (${r.captainPhone})</a></div>`;
+    } else if (r.status === 'مكتملة') {
+      title.innerText = '🏁 تمت الرحلة بنجاح!'; info.innerHTML = '';
+    } else {
+      title.innerText = '⏳ تم إرسال طلبك للكباتن...'; info.innerHTML = '';
+    }
+  }
+
+  window.cancelCustomerRide = async () => {
+    if (activeRideId) await updateDoc(doc(db, 'rides', activeRideId), { status:'ملغاة' });
+    activeRideId = null;
+    document.getElementById('active-ride-area').style.display = 'none';
+    document.getElementById('booking-form-area').style.display = 'block';
+  };
+
+  window.updateCaptainSeats = async (val) => {
+    const s = parseInt(val); currentUser.seatsAvailable = s;
+    await updateDoc(doc(db, 'captains', currentUser.phone), { seatsAvailable:s });
+  };
+
+  function startCaptainListener() {
+    unsubs.push(onSnapshot(query(collection(db, 'rides'), orderBy('createdAt', 'desc')), snap => {
+      const arr = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      const list = document.getElementById('captain-rides-list');
+      const html = arr.filter(r => r.status === 'بانتظار كابتن' || (r.status === 'تم القبول' && r.captainPhone === currentUser.phone)).map(r => {
+        const isMine = r.status === 'تم القبول', wa = r.phone.startsWith('0') ? '964' + r.phone.slice(1) : r.phone;
+        return `<div class="card">
+          <div style="display:flex;justify-content:space-between;"><strong>👤 ${r.customer}</strong><span class="badge ${isMine?'badge-active':'badge-pending'}">${r.status}</span></div>
+          <p style="margin:8px 0;font-size:13px;line-height:1.6;">🔵 من: <b>${r.from}</b><br>🟢 إلى: <b>${r.to}</b></p>
+          <p style="color:var(--success);font-weight:800;font-size:14px;">💵 ${r.details}</p>
+          <div class="action-row">
+            ${!isMine ? `<button class="btn btn-primary btn-sm" style="flex:1;" onclick="acceptRide('${r.id}')">قبول الرحلة</button>` : `<button class="btn btn-success btn-sm" style="flex:1;" onclick="completeRide('${r.id}')">تم التوصيل</button>`}
+            <a href="tel:${r.phone}" class="btn btn-outline btn-sm" style="flex:1;">📞 اتصال</a>
+            <a href="https://wa.me/${wa}" target="_blank" class="btn btn-success btn-sm" style="flex:1;">
